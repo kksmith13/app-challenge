@@ -20,9 +20,7 @@
 		8365A9CD2103F5E7009D37FC /* UIView+helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8365A9CC2103F5E7009D37FC /* UIView+helpers.swift */; };
 		8365A9CF2104BA45009D37FC /* RawServerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8365A9CE2104BA45009D37FC /* RawServerResponse.swift */; };
 		8365A9D921052139009D37FC /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8365A9D821052139009D37FC /* APIClient.swift */; };
-		8365A9DB210525D3009D37FC /* ImageDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8365A9DA210525D3009D37FC /* ImageDownloadManager.swift */; };
-		8365A9DD21056BCD009D37FC /* ImageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8365A9DC21056BCD009D37FC /* ImageDetailView.swift */; };
-		8365A9DF21057050009D37FC /* ImageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8365A9DE21057050009D37FC /* ImageDetailViewController.swift */; };
+		83965FD72106C96000452DDA /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83965FD62106C96000452DDA /* AlertView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,9 +39,7 @@
 		8365A9CC2103F5E7009D37FC /* UIView+helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+helpers.swift"; sourceTree = "<group>"; };
 		8365A9CE2104BA45009D37FC /* RawServerResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawServerResponse.swift; sourceTree = "<group>"; };
 		8365A9D821052139009D37FC /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
-		8365A9DA210525D3009D37FC /* ImageDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloadManager.swift; sourceTree = "<group>"; };
-		8365A9DC21056BCD009D37FC /* ImageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDetailView.swift; sourceTree = "<group>"; };
-		8365A9DE21057050009D37FC /* ImageDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDetailViewController.swift; sourceTree = "<group>"; };
+		83965FD62106C96000452DDA /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,7 +91,6 @@
 			children = (
 				8365A9C02103EB44009D37FC /* NavigationController.swift */,
 				8365A9BF2103EB44009D37FC /* ImageGridViewController.swift */,
-				8365A9DE21057050009D37FC /* ImageDetailViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -104,8 +99,8 @@
 			isa = PBXGroup;
 			children = (
 				8365A9C82103F561009D37FC /* BaseView.swift */,
+				83965FD62106C96000452DDA /* AlertView.swift */,
 				8365A9C62103F528009D37FC /* ImageGridView.swift */,
-				8365A9DC21056BCD009D37FC /* ImageDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -148,7 +143,6 @@
 			isa = PBXGroup;
 			children = (
 				8365A9D821052139009D37FC /* APIClient.swift */,
-				8365A9DA210525D3009D37FC /* ImageDownloadManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -224,13 +218,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8365A9DB210525D3009D37FC /* ImageDownloadManager.swift in Sources */,
-				8365A9DF21057050009D37FC /* ImageDetailViewController.swift in Sources */,
 				8365A9CB2103F589009D37FC /* ImageCell.swift in Sources */,
 				8365A9CF2104BA45009D37FC /* RawServerResponse.swift in Sources */,
 				8365A9C72103F528009D37FC /* ImageGridView.swift in Sources */,
+				83965FD72106C96000452DDA /* AlertView.swift in Sources */,
 				8365A9C52103EBA0009D37FC /* BaseCVCell.swift in Sources */,
-				8365A9DD21056BCD009D37FC /* ImageDetailView.swift in Sources */,
 				8365A9C32103EB44009D37FC /* NavigationController.swift in Sources */,
 				8365A9C92103F561009D37FC /* BaseView.swift in Sources */,
 				8365A9AD2103EAF3009D37FC /* AppDelegate.swift in Sources */,

@@ -25,45 +25,49 @@ class ImageGridView: BaseView, UICollectionViewDataSource, UICollectionViewDeleg
     }()
     
     enum EnabledView {
-        case GridView
-        case DetailView
+        case grid
+        case detail
     }
     
+    let api = APIClient.shared
     let cellId = "cellId"
     var page = 0
-    var count = 15
+    var initalLoadCount = 50
     var canLoadMoreImages = true
-    var currentView: EnabledView = .GridView
-    
-
+    var currentView: EnabledView = .grid
     
     override func setupViews() {
         super.setupViews()
         
+        let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
+        collectionView.addGestureRecognizer(gestureRecognizer)
         collectionView.register(ImageCell.self, forCellWithReuseIdentifier: cellId)
         addSubview(collectionView)
         
-        _ = collectionView.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 44, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
-        loadMoreImages()
+        _ = collectionView.anchor(safeAreaLayoutGuide.topAnchor, left: safeAreaLayoutGuide.leftAnchor, bottom: safeAreaLayoutGuide.bottomAnchor, right: safeAreaLayoutGuide.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        
+        loadMoreImages(count: initalLoadCount)
     }
     
-    func loadMoreImages() {
-        APIClient.shared.fetchImages(count: count, page: page, completion: { (data) in
-//            if (count * page) > (ImageDownloadManager.shared.imagesInSearch - count) { }
+    func loadMoreImages(count: Int = 15) {
+        
+        // Handle senario where we are about to run out of images to load in
+//        if (count * page) > ImageDownloadManager.shared.imagesInSearch {
+//            count = ImageDownloadManager.shared.imagesInSearch - (count * page) - 1
+//            canLoadMoreImages = false
+//        }
+        
+        api.fetchImages(count: count, page: page, completion: { (data) in
             self.page += 1
             guard let dataPresent = data else {
                 return
             }
-            
+
             for item in dataPresent.value {
-                let url = item.thumbnailUrl
-                let data = try? Data(contentsOf: url)
-                if let imageData = data {
-                    ImageDownloadManager.shared.images.append(UIImage(data: imageData)!)
-                }
+                self.api.thumbnailImageUrl.append(item.thumbnailUrl.absoluteString)
+                self.api.detailedImageUrl.append(item.contentUrl.absoluteString)
             }
-            
             self.reloadCollectionViewData()
         })
     }
@@ -78,22 +82,34 @@ class ImageGridView: BaseView, UICollectionViewDataSource, UICollectionViewDeleg
     
     //MARK: - CV Delegate Methods
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return ImageDownloadManager.shared.images.count
+        return api.thumbnailImageUrl.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ImageCell
-        DispatchQueue.main.async {
-            if ImageDownloadManager.shared.images.count < indexPath.row {
-                cell.imageView.image = ImageDownloadManager.shared.images[indexPath.row]
+        
+        if self.currentView == .grid {
+            let imageUrl = api.thumbnailImageUrl[indexPath.row]
+            APIClient.shared.downloadImageFromUrl(urlString: imageUrl) { (success, image) in
+                if success && image != nil {
+                    cell.imageView.image = image
+                }
+            }
+        } else {
+            let imageUrl = api.detailedImageUrl[indexPath.row]
+            APIClient.shared.downloadImageFromUrl(urlString: imageUrl) { (success, image) in
+                if success && image != nil {
+                    cell.imageView.image = image
+                }
             }
         }
+        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        if currentView == .GridView {
+        if currentView == .grid {
             let numberOfItemsPerRow = 4
             let flowLayout = collectionViewLayout as! UICollectionViewFlowLayout
             let totalSpace = flowLayout.sectionInset.left
@@ -113,28 +129,45 @@ class ImageGridView: BaseView, UICollectionViewDataSource, UICollectionViewDeleg
                 self.loadMoreImages()
             }
         }
-        
-        DispatchQueue.main.async {
-            (cell as! ImageCell).imageView.image = ImageDownloadManager.shared.images[indexPath.row]
-        }
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if currentView == .GridView {
+        
+        // If currently in grid mode, switch everything to prepare for detail view
+        if currentView == .grid {
             collectionView.isPagingEnabled = true
-            currentView = .DetailView
+            currentView = .detail
             if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
                 layout.scrollDirection = .horizontal
             }
+        // else switch back to grid mode properties
         } else {
             collectionView.isPagingEnabled = false
-            currentView = .GridView
+            currentView = .grid
             if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
                 layout.scrollDirection = .vertical
             }
         }
         
         reloadCollectionViewData()
+        
+        // Handle scrolling to correct index when detail view has fully loaded
+        if currentView == .detail {
+            collectionView.scrollToItem(at: indexPath, at: .right, animated: false)
+            layoutIfNeeded()
+        }
+    }
+    
+    @objc fileprivate func handleLongPress(recognizer: UIGestureRecognizer) {
+        let tap = recognizer.location(in: self.collectionView)
+        if let indexPath = collectionView.indexPathForItem(at: tap) {
+            let cell = collectionView.cellForItem(at: indexPath) as! ImageCell
+            let image = cell.imageView.image
+            UIPasteboard.general.image = image
+            
+            let alert = AlertView()
+            addSubview(alert)
+            _ = alert.anchor(nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 50)
+        }
     }
 }

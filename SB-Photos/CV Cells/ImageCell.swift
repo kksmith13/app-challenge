@@ -12,7 +12,7 @@ class ImageCell: BaseCVCell {
     
     let imageView: UIImageView = {
         let iv = UIImageView()
-        iv.backgroundColor = .black
+        iv.backgroundColor = .white
         return iv
     }()
     
@@ -20,6 +20,6 @@ class ImageCell: BaseCVCell {
         super.setupCell()
         
         addSubview(imageView)
-        _ = imageView.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 1, bottomConstant: 2, rightConstant: 1, widthConstant: 0, heightConstant: 0)
+        _ = imageView.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
     }
 }

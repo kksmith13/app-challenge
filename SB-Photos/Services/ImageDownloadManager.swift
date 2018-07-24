@@ -12,16 +12,10 @@ import UIKit
 final class ImageDownloadManager {
     static let shared = ImageDownloadManager()
     
-    lazy var imageDownloadQueue: OperationQueue = {
-        var queue = OperationQueue()
-        queue.name = "com.sbPhotos.imageDownloadQueue"
-        queue.qualityOfService = .userInteractive
-        return queue
-    }()
-    
     var imageCache = NSCache<NSString, UIImage>()
     var imagesInSearch = 0
-    var images: [UIImage] = []
+    var thumbnailImageUrl: [String] = []
+    var detailedImageUrl: [String] = []
     fileprivate init() { }
     
 }

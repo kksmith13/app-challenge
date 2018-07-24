@@ -18,6 +18,12 @@ class BaseView: UIView {
     
     func setupViews() { }
     
+    // TODO: Animate clipboard alert
+    // TODO: Handle gifs
+    // TODO: Make sure images are correct - not using preloaded one
+    // TODO: Prefetch?
+    // TODO: Failed/Downloading/Complete?
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
