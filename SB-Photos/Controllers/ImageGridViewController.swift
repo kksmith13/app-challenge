@@ -172,7 +172,6 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
                     if self.api.gifs {
                         let url = URL(string: imageUrl)
                         cell.imageView.setGifFromURL(url)
-                        cell.imageView.startAnimating()
                     } else {
                         cell.imageView.image = image
                     }
@@ -193,11 +192,15 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
             let size = Int((collectionView.bounds.width - totalSpace) / CGFloat(numberOfItemsPerRow))
             return CGSize(width: size, height: size)
         } else {
-            return CGSize(width: view.frame.width, height: view.frame.height)
+            return CGSize(width: view.safeAreaLayoutGuide.layoutFrame.width, height: view.safeAreaLayoutGuide.layoutFrame.height)
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        // start the gifs from animating before coming on screen
+        let cell = (cell as! ImageCell)
+        cell.imageView.startAnimatingGif()
+        
         let lastRowIndex = collectionView.numberOfItems(inSection: 0) - 10
         if indexPath.row == lastRowIndex && canLoadMoreImages {
             DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async {
@@ -206,19 +209,24 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
         }
     }
     
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        // stop the gifs from animating after going off screen
+        (cell as! ImageCell).imageView.stopAnimatingGif()
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         // If currently in grid mode, switch everything to prepare for detail view
         if currentView == .grid {
-            collectionView.isPagingEnabled = true
             currentView = .detail
+            collectionView.isPagingEnabled = true
             if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
                 layout.scrollDirection = .horizontal
             }
         } else {
             // else switch back to grid mode properties
-            collectionView.isPagingEnabled = false
             currentView = .grid
+            collectionView.isPagingEnabled = false
             if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
                 layout.scrollDirection = .vertical
             }
@@ -226,6 +234,7 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
         
         DispatchQueue.main.async {
             collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+            self.mainView.collectionView.reloadData()
             self.view.layoutIfNeeded()
         }
     }
