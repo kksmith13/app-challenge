@@ -5,8 +5,12 @@
 //  Created by Kyle Smith on 7/20/18.
 //  Copyright © 2018 smithcoding. All rights reserved.
 //
+// TODO: Press and hold set image to background if not gif
+// TODO: Prefetch? - need to use image NSOperations
+// TODO: Failed/Downloading/Complete?
 
 import UIKit
+import SwiftyGif
 
 class ImageGridViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate {
     
@@ -25,6 +29,7 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
     
     let api = APIClient.shared
     let cellId = "cellId"
+    let navTitle = "SB Challenge"
     
     var page = 0
     var itemsPerPage = 50
@@ -36,14 +41,25 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "SB Challenge"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "GIF", style: .done, target: self, action: #selector(pushSettings))
         view = mainView
         
         
         let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         mainView.collectionView.addGestureRecognizer(gestureRecognizer)
         mainView.collectionView.register(ImageCell.self, forCellWithReuseIdentifier: cellId)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationItem.title = navTitle
+        mainView.collectionView.reloadData()
         loadMoreImages()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationItem.title = ""
     }
     
     override func didReceiveMemoryWarning() {
@@ -51,12 +67,20 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
         // Dispose of any resources that can be recreated.
     }
     
+    @objc func pushSettings() {
+        let settings = SettingsController()
+        navigationController?.pushViewController(settings, animated: true)
+    }
+    
     func loadMoreImages() {
 
     // Handle senario where we are about to run out of images to load in
         if (itemsPerPage * page) > api.imagesInSearch {
-            itemsPerPage = api.imagesInSearch - (itemsPerPage * page) - 1
-            canLoadMoreImages = false
+            let countCheck = api.imagesInSearch - (itemsPerPage * page) - 1
+            if countCheck > 0 {
+                itemsPerPage = countCheck
+                canLoadMoreImages = false
+            }
         }
         
         api.fetchImages(count: itemsPerPage, page: page, completion: { (data) in
@@ -66,6 +90,7 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
             }
             
             self.api.imagesInSearch = dataPresent.totalEstimatedMatches
+            self.api.nextOffset     = dataPresent.nextOffset
             
             for item in dataPresent.value {
                 self.api.thumbnailImageUrl.append(item.thumbnailUrl.absoluteString)
@@ -128,8 +153,11 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ImageCell
         
         // clean up image
+        cell.imageView.gifImage = nil
         cell.imageView.image = nil
+        
         cell.imageView.contentMode = .scaleAspectFit
+        
         if self.currentView == .grid {
             let imageUrl = api.thumbnailImageUrl[indexPath.row]
             APIClient.shared.downloadImageFromUrl(urlString: imageUrl) { (success, image) in
@@ -141,7 +169,13 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
             let imageUrl = api.detailedImageUrl[indexPath.row]
             APIClient.shared.downloadImageFromUrl(urlString: imageUrl) { (success, image) in
                 if success && image != nil {
-                    cell.imageView.image = image
+                    if self.api.gifs {
+                        let url = URL(string: imageUrl)
+                        cell.imageView.setGifFromURL(url)
+                        cell.imageView.startAnimating()
+                    } else {
+                        cell.imageView.image = image
+                    }
                 }
             }
         }
@@ -150,7 +184,6 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
         if currentView == .grid {
             let numberOfItemsPerRow = 4
             let flowLayout = collectionViewLayout as! UICollectionViewFlowLayout
@@ -165,7 +198,7 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let lastRowIndex = collectionView.numberOfItems(inSection: 0) - 3
+        let lastRowIndex = collectionView.numberOfItems(inSection: 0) - 10
         if indexPath.row == lastRowIndex && canLoadMoreImages {
             DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async {
                 self.loadMoreImages()
@@ -191,10 +224,9 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
             }
         }
         
-        // Handle scrolling to correct index when detail view has fully loaded
-        if currentView == .detail {
-            collectionView.scrollToItem(at: indexPath, at: .right, animated: false)
-            view.layoutIfNeeded()
+        DispatchQueue.main.async {
+            collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+            self.view.layoutIfNeeded()
         }
     }
 }

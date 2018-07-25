@@ -16,12 +16,9 @@ class BaseView: UIView {
         setupViews()
     }
     
-    func setupViews() { }
-    // TODO: Handle gifs - SwiftGif
-    // TODO: Press and hold set image to background if not gif
-    
-    // TODO: Prefetch? - need to use image NSOperations
-    // TODO: Failed/Downloading/Complete?
+    func setupViews() {
+        backgroundColor = UIColor.smashingBoxesPink()
+    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

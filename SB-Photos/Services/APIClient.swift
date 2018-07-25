@@ -15,13 +15,23 @@ class APIClient {
     
     var imageCache = NSCache<NSString, UIImage>()
     var imagesInSearch = 0
+    var nextOffset = 0
     var thumbnailImageUrl: [String] = []
     var detailedImageUrl: [String] = []
+    var gifs = false
     
     func fetchImages(count: Int = 20, page: Int = 0, completion: @escaping (RawServerResponse?) -> Void) {
         // Version 7 of the API was the only thing avaiable in the 7 day trial for me
-        let url = URL(string: "https://api.cognitive.microsoft.com/bing/v7.0/images/search?q=rick%20and%20morty&count=\(count)&offset=\(count * page)&mkt=en-us&safeSearch=Moderate")
-        var request = URLRequest(url: url!)
+        
+        var url: URL
+        
+        if gifs {
+            url = URL(string: "https://api.cognitive.microsoft.com/bing/v7.0/images/search?q=rick%20and%20morty&count=\(count)&offset=\(nextOffset)&mkt=en-us&safeSearch=Moderate&imageType=AnimatedGif")!
+        } else {
+            url = URL(string: "https://api.cognitive.microsoft.com/bing/v7.0/images/search?q=cryptocurrency&count=\(count)&offset=\(nextOffset)&mkt=en-us&safeSearch=Moderate")!
+        }
+        
+        var request = URLRequest(url: url)
         request.addValue(apiKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
         
         let session = URLSession.shared

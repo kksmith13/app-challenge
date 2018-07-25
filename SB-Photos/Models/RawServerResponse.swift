@@ -10,6 +10,7 @@ import Foundation
 
 struct RawServerResponse: Decodable {
     var totalEstimatedMatches: Int
+    var nextOffset: Int
     var value: [ImageData]
     
     struct ImageData: Decodable {

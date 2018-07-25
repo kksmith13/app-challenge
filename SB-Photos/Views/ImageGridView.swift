@@ -22,11 +22,7 @@ class ImageGridView: BaseView {
     
     override func setupViews() {
         super.setupViews()
-        
-        // set background for safe area
-        backgroundColor = UIColor.smashingBoxesPink()
         addSubview(collectionView)
-        
         
         _ = collectionView.anchor(safeAreaLayoutGuide.topAnchor, left: safeAreaLayoutGuide.leftAnchor, bottom: safeAreaLayoutGuide.bottomAnchor, right: safeAreaLayoutGuide.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
     }
