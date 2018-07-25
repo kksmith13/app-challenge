@@ -20,7 +20,7 @@ class APIClient {
     
     func fetchImages(count: Int = 20, page: Int = 0, completion: @escaping (RawServerResponse?) -> Void) {
         // Version 7 of the API was the only thing avaiable in the 7 day trial for me
-        let url = URL(string: "https://api.cognitive.microsoft.com/bing/v7.0/images/search?q=iPad&count=\(count)&offset=\(count * page)&mkt=en-us&safeSearch=Moderate")
+        let url = URL(string: "https://api.cognitive.microsoft.com/bing/v7.0/images/search?q=rick%20and%20morty&count=\(count)&offset=\(count * page)&mkt=en-us&safeSearch=Moderate")
         var request = URLRequest(url: url!)
         request.addValue(apiKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
         

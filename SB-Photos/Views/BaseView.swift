@@ -17,11 +17,10 @@ class BaseView: UIView {
     }
     
     func setupViews() { }
+    // TODO: Handle gifs - SwiftGif
+    // TODO: Press and hold set image to background if not gif
     
-    // TODO: Animate clipboard alert
-    // TODO: Handle gifs
-    // TODO: Make sure images are correct - not using preloaded one
-    // TODO: Prefetch?
+    // TODO: Prefetch? - need to use image NSOperations
     // TODO: Failed/Downloading/Complete?
     
     required init?(coder aDecoder: NSCoder) {

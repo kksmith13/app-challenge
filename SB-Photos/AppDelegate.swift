@@ -15,6 +15,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
+        UINavigationBar.appearance().shadowImage = UIImage()
+        UINavigationBar.appearance().backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0)
+        UINavigationBar.appearance().isTranslucent = true
+        UIApplication.shared.statusBarStyle = .lightContent
+        
+        // Navigation size and color
+        UINavigationBar.appearance().titleTextAttributes = [NSAttributedStringKey.font : UIFont.systemFont(ofSize: 26, weight: UIFont.Weight.light), NSAttributedStringKey.foregroundColor: UIColor.white]
+        
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         
@@ -44,7 +54,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-
 }
-
