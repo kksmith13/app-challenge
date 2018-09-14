@@ -23,7 +23,6 @@ class AlertView: BaseView {
         super.setupViews()
         layer.borderColor = UIColor.black.cgColor
         layer.borderWidth = 0.5
-        backgroundColor = .smashingBoxesPink()
         addSubview(textLabel)
         
         addConstraintsWithFormat(format: "H:|[v0]|", views: textLabel)
