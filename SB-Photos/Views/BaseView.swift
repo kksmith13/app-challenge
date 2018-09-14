@@ -17,7 +17,7 @@ class BaseView: UIView {
     }
     
     func setupViews() {
-        backgroundColor = UIColor.smashingBoxesPink()
+        backgroundColor = UIColor.appColor()
     }
     
     required init?(coder aDecoder: NSCoder) {

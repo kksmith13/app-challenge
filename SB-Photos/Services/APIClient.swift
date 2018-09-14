@@ -11,7 +11,7 @@ import UIKit
 
 class APIClient {
     static let shared = APIClient()
-    let apiKey = "d49118f7f7a943278d03ad85a4eb5201"
+    let apiKey = "d099b48b7fcc4ea78549342f36c824af"
     
     var imageCache = NSCache<NSString, UIImage>()
     var imagesInSearch = 0

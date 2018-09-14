@@ -29,7 +29,7 @@ class ImageGridViewController: UIViewController, UICollectionViewDataSource, UIC
     
     let api = APIClient.shared
     let cellId = "cellId"
-    let navTitle = "SB Challenge"
+    let navTitle = "App Challenge"
     
     var page = 0
     var itemsPerPage = 50
