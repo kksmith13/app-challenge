@@ -16,9 +16,20 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
         sv.tableView.dataSource = self
         return sv
     }()
+    
+    let client: Client
 
     let cellId = "cellId"
     let navTitle = "Settings"
+    
+    init(client: Client) {
+        self.client = client
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,14 +63,8 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let api = APIClient.shared
-        api.gifs = indexPath.row == 0 ? false : true
-        api.imageCache.removeAllObjects()
-        api.detailedImageUrl.removeAll()
-        api.thumbnailImageUrl.removeAll()
-        api.imagesInSearch = 0
-        api.nextOffset = 0
-        
+        let gifs = indexPath.row == 0 ? false : true
+        client.resetClient(gifs)
         navigationController?.popViewController(animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }

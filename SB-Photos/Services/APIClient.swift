@@ -9,16 +9,24 @@
 import Foundation
 import UIKit
 
-class APIClient {
-    static let shared = APIClient()
-    let apiKey = "d099b48b7fcc4ea78549342f36c824af"
+class APIClient: Client {
+    var thumbnailImage: [String] = []
+    var detailedImage: [String] = []
+    var gifs = false
     
+    let apiKey = "d099b48b7fcc4ea78549342f36c824af"
     var imageCache = NSCache<NSString, UIImage>()
     var imagesInSearch = 0
     var nextOffset = 0
-    var thumbnailImageUrl: [String] = []
-    var detailedImageUrl: [String] = []
-    var gifs = false
+    
+    func resetClient(_ gifs: Bool) {
+        self.gifs = gifs
+        imagesInSearch = 0
+        nextOffset = 0
+        imageCache.removeAllObjects()
+        detailedImage.removeAll()
+        thumbnailImage.removeAll()
+    }
     
     func fetchImages(count: Int = 20, page: Int = 0, completion: @escaping (RawServerResponse?) -> Void) {
         // Version 7 of the API was the only thing avaiable in the 7 day trial for me
@@ -53,16 +61,16 @@ class APIClient {
         }).resume()
     }
     
-    func downloadImageFromUrl(urlString: String, completion: ((_ success: Bool, _ image: UIImage?) -> Void)?) {
-        
+    func fetchImageForCellAt(indexPath: IndexPath, view: ImageGridViewController.EnabledView, completion: ((_ success: Bool, _ image: UIImage?) -> Void)?) {
         // check the cache to see if the image is there
-        if let cachedImage = imageCache.object(forKey: urlString as NSString) {
+        let imageUrl = view == .grid ? thumbnailImage[indexPath.row] : detailedImage[indexPath.row]
+        if let cachedImage = imageCache.object(forKey: imageUrl as NSString) {
             DispatchQueue.main.async {
                 completion?(true, cachedImage)
             }
         } else {
             // go fetch the image
-            let url = URL(string: urlString)
+            let url = URL(string: imageUrl)
             var request = URLRequest(url: url!)
             request.addValue(apiKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
             
@@ -70,13 +78,41 @@ class APIClient {
             session.downloadTask(with: url!, completionHandler: {(responseUrl, response, error) in
                 let data = try? Data(contentsOf: responseUrl!)
                 if let image = UIImage(data: data!) {
-                    self.imageCache.setObject(image, forKey: urlString as NSString)
+                    self.imageCache.setObject(image, forKey: imageUrl as NSString)
                     DispatchQueue.main.async {
                         completion?(true, image)
                     }
                 }
             }).resume()
         }
+    }
+    
+    func loadMoreImages(controller: ImageGridViewController) {
+        // Handle senario where we are about to run out of images to load in
+        if (controller.itemsPerPage * controller.page) > imagesInSearch {
+            let countCheck = imagesInSearch - (controller.itemsPerPage * controller.page) - 1
+            if countCheck > 0 {
+                // itemsPerPage = countCheck
+                controller.canLoadMoreImages = false
+            }
+        }
+        
+        fetchImages(count: controller.itemsPerPage, page: controller.page, completion: { (data) in
+            controller.page += 1
+            guard let dataPresent = data else {
+                return
+            }
+            
+            self.imagesInSearch = dataPresent.totalEstimatedMatches
+            self.nextOffset     = dataPresent.nextOffset
+            
+            for item in dataPresent.value {
+                self.thumbnailImage.append(item.thumbnailUrl.absoluteString)
+                self.detailedImage.append(item.contentUrl.absoluteString)
+            }
+            
+            controller.reloadCollectionViewData()
+        })
     }
 }
 

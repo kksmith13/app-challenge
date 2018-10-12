@@ -25,6 +25,8 @@
 		83965FD921080A1700452DDA /* UIColor+helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83965FD821080A1700452DDA /* UIColor+helpers.swift */; };
 		83965FDB2108166500452DDA /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83965FDA2108166500452DDA /* SettingsController.swift */; };
 		83965FDD21082A2000452DDA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83965FDC21082A2000452DDA /* SettingsView.swift */; };
+		83F4897121705036008FAE60 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83F4897021705036008FAE60 /* Client.swift */; };
+		83F48973217050AF008FAE60 /* DiskClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83F48972217050AF008FAE60 /* DiskClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +51,8 @@
 		83965FD821080A1700452DDA /* UIColor+helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+helpers.swift"; sourceTree = "<group>"; };
 		83965FDA2108166500452DDA /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		83965FDC21082A2000452DDA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		83F4897021705036008FAE60 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		83F48972217050AF008FAE60 /* DiskClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskClient.swift; sourceTree = "<group>"; };
 		E53B6629A23FF97E9AEDEA9A /* Pods-SB-Photos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SB-Photos.release.xcconfig"; path = "Pods/Target Support Files/Pods-SB-Photos/Pods-SB-Photos.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -167,7 +171,9 @@
 		8365A9D721052127009D37FC /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				83F4897021705036008FAE60 /* Client.swift */,
 				8365A9D821052139009D37FC /* APIClient.swift */,
+				83F48972217050AF008FAE60 /* DiskClient.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -313,9 +319,11 @@
 				83965FDB2108166500452DDA /* SettingsController.swift in Sources */,
 				8365A9C72103F528009D37FC /* ImageGridView.swift in Sources */,
 				83965FD72106C96000452DDA /* AlertView.swift in Sources */,
+				83F48973217050AF008FAE60 /* DiskClient.swift in Sources */,
 				8365A9C52103EBA0009D37FC /* BaseCVCell.swift in Sources */,
 				8365A9C32103EB44009D37FC /* NavigationController.swift in Sources */,
 				83965FDD21082A2000452DDA /* SettingsView.swift in Sources */,
+				83F4897121705036008FAE60 /* Client.swift in Sources */,
 				8365A9C92103F561009D37FC /* BaseView.swift in Sources */,
 				8365A9AD2103EAF3009D37FC /* AppDelegate.swift in Sources */,
 				8365A9C22103EB44009D37FC /* ImageGridViewController.swift in Sources */,
